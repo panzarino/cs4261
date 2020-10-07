@@ -1,12 +1,12 @@
-import React from 'react';
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import React from 'react'
+import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react'
 
-import VerifyNotLoggedIn from '../components/VerifyNotLoggedIn';
+import VerifyNotLoggedIn from '../components/VerifyNotLoggedIn'
 
 const MainMenu: React.FC = () => {
   return (
     <IonPage>
-        <VerifyNotLoggedIn />
+      <VerifyNotLoggedIn />
       <IonHeader>
         <IonToolbar>
           <IonTitle>Smart Scheduler</IonTitle>
@@ -18,11 +18,15 @@ const MainMenu: React.FC = () => {
             <IonTitle size="large">Smart Scheduler</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonButton color="primary" expand="block" routerLink="/register" routerDirection="forward">Register</IonButton>
-        <IonButton color="medium" expand="block" routerLink="/login" routerDirection="forward">Log In</IonButton>
+        <IonButton color="primary" expand="block" routerLink="/register" routerDirection="forward">
+          Register
+        </IonButton>
+        <IonButton color="medium" expand="block" routerLink="/login" routerDirection="forward">
+          Log In
+        </IonButton>
       </IonContent>
     </IonPage>
-  );
-};
+  )
+}
 
-export default MainMenu;
+export default MainMenu
