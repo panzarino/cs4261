@@ -1,0 +1,7 @@
+{
+  "name": "smart-scheduler",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
