@@ -45,7 +45,9 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "2.4.2"
+    "@capacitor/cli": "2.4.2",
+    "firebase": "^7.22.1",
+    "react-firebase-hooks": "^2.2.0"
   },
   "description": "An Ionic project"
 }
