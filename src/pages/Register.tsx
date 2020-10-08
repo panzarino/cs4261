@@ -8,6 +8,7 @@ import {
   IonHeader,
   IonInput,
   IonItem,
+  IonLoading,
   IonPage,
   IonToolbar,
 } from '@ionic/react'
@@ -20,6 +21,8 @@ const Register: React.FC = () => {
   const history = useHistory()
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>()
 
   const register = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -28,19 +31,15 @@ const Register: React.FC = () => {
       return
     }
 
+    setLoading(true)
+
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password)
+      history.push('/home')
     } catch (e) {
-      if (e.code === 'auth/email-already-in-use') {
-        // TODO
-      } else if (e.code === 'auth/invalid-email') {
-        // TODO
-      } else if (e.code === 'auth/weak-password') {
-        // TODO
-      }
+      setError(e.code)
+      setLoading(false)
     }
-
-    history.push('/home')
   }
 
   return (
@@ -54,10 +53,17 @@ const Register: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonLoading isOpen={loading} />
         <h1>Register</h1>
         <form onSubmit={register}>
           <IonItem>
-            <IonInput value={email} placeholder="Username" onIonChange={(e) => setEmail(e.detail.value!)} required />
+            <IonInput
+              type="email"
+              value={email}
+              placeholder="Email"
+              onIonChange={(e) => setEmail(e.detail.value!)}
+              required
+            />
           </IonItem>
           <IonItem>
             <IonInput
@@ -71,6 +77,17 @@ const Register: React.FC = () => {
           <IonButton color="primary" expand="block" type="submit">
             Register
           </IonButton>
+          {error && (
+            <IonItem color="danger">
+              {error === 'auth/email-already-in-use'
+                ? 'Error: that email is already in use'
+                : error === 'auth/invalid-email'
+                ? 'Please use a valid email'
+                : error === 'auth/weak-password'
+                ? 'Error: please use a stronger password'
+                : 'Something went wrong, please try again'}
+            </IonItem>
+          )}
         </form>
       </IonContent>
     </IonPage>
