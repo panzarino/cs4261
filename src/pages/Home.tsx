@@ -1,19 +1,17 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { IonButton, IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useList } from 'react-firebase-hooks/database'
-import VerifyLoggedIn from '../components/VerifyLoggedIn'
 
 import firebase from '../lib/firebase'
+
+import VerifyLoggedIn from '../components/VerifyLoggedIn'
 
 const db = firebase.database()
 
 const Home: React.FC = () => {
   const [user] = useAuthState(firebase.auth())
-
-  const getCourse = async (courseId: string) => {
-    db.ref('courses').equalTo(courseId)
-  }
+  const [courses, setCourses] = useState<any[]>([])
 
   const [selections] = useList(
     db
@@ -21,6 +19,22 @@ const Home: React.FC = () => {
       .orderByChild('uid')
       .equalTo(user ? user.uid : '')
   )
+
+  useEffect(() => {
+    if (!selections || selections.length === 0) {
+      return
+    }
+
+    setCourses([])
+    const selection = selections[0]
+    selection.val().courses.forEach((key: string) => {
+      db.ref('courses')
+        .child(key)
+        .once('value', (course) => {
+          setCourses([...courses, course])
+        })
+    })
+  }, [selections])
 
   return (
     <IonPage>
@@ -34,15 +48,21 @@ const Home: React.FC = () => {
         <IonToolbar>
           <IonTitle size="large">Smart Scheduler</IonTitle>
         </IonToolbar>
-        <IonButton color="primary" expand="block" routerLink="/add" routerDirection="forward">
+        <IonButton
+          color="primary"
+          expand="block"
+          routerLink="/add"
+          routerDirection="forward"
+          style={{ marginBottom: 30 }}
+        >
           Add Course
         </IonButton>
         <IonList>
-          {user && selections && selections.length > 0
-            ? selections
-                .filter((selection) => selection.val().userId.equalTo(user.uid))
-                .map((selection) => <IonItem>{getCourse(selection.val().course)}</IonItem>)
-            : 'None Found'}
+          {courses.length > 0 ? (
+            courses.map((course) => <IonItem key={course.key}>{course.val().name}</IonItem>)
+          ) : (
+            <IonItem>No courses yet! Add some above to get started.</IonItem>
+          )}
         </IonList>
       </IonContent>
     </IonPage>
