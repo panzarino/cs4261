@@ -7,6 +7,7 @@ import MainMenu from './pages/MainMenu'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
+import Add from './pages/Add'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -31,10 +32,11 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route path="/" component={MainMenu} exact={true} />
-        <Route path="/login" component={Login} exact={true} />
-        <Route path="/register" component={Register} exact={true} />
-        <Route path="/home" component={Home} exact={true} />
+        <Route exact path="/" component={MainMenu} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/register" component={Register} />
+        <Route exact path="/home" component={Home} />
+        <Route exact path="/add" component={Add} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
