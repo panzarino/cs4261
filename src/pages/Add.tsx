@@ -37,7 +37,7 @@ const Add: React.FC = () => {
     db
       .ref('selections')
       .orderByChild('uid')
-      .equalTo(user ? user.uid + '' : '')
+      .equalTo(user ? user.uid : '')
   )
 
   const addCourse = async (courseKey: string) => {
