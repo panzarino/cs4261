@@ -123,3 +123,5 @@ dist
 .env.test.local
 .env.production.local
 .vscode
+
+service-account.json
