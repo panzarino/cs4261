@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { IonButton, IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonList,
+  IonNote,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useList } from 'react-firebase-hooks/database'
 
@@ -28,21 +38,23 @@ const Home: React.FC = () => {
     setCourses([])
     const selection = selections[0]
     selection.val().courses.forEach((key: string) => {
-      db.ref('courses')
-        .child(key)
-        .once('value', (course) => {
+      db.ref(`courses/${key}`).once('value', (course) => {
+        if (!courses.find((c) => c.key === course.key)) {
           setCourses([...courses, course])
-        })
+        }
+      })
     })
   }, [selections])
+
+  const remove = (courseKey: string) => {
+    setCourses(courses.filter((c) => c.key !== courseKey))
+  }
 
   return (
     <IonPage>
       <VerifyLoggedIn />
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Smart Scheduler</IonTitle>
-        </IonToolbar>
+        <IonToolbar />
       </IonHeader>
       <IonContent fullscreen>
         <IonToolbar>
@@ -59,7 +71,14 @@ const Home: React.FC = () => {
         </IonButton>
         <IonList>
           {courses.length > 0 ? (
-            courses.map((course) => <IonItem key={course.key}>{course.val().name}</IonItem>)
+            courses.map((course) => (
+              <IonItem key={course.key}>
+                {course.val().name}{' '}
+                <IonNote slot="end" color="danger" onClick={() => remove(course.key)}>
+                  X
+                </IonNote>
+              </IonItem>
+            ))
           ) : (
             <IonItem>No courses yet! Add some above to get started.</IonItem>
           )}
