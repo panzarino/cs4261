@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start-app": "yarn workspace app start"
+    "start-app": "yarn workspace app start",
+    "start-server": "yarn workspace server start"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.2",
@@ -13,7 +14,8 @@
     "prettier": "2.1.2"
   },
   "workspaces": [
-    "app"
+    "app",
+    "server"
   ],
   "repository": "git@github.com:panzarino/cs4261.git",
   "husky": {
