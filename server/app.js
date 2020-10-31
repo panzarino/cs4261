@@ -2,7 +2,6 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 
 require('dotenv').config()
 
@@ -16,12 +15,7 @@ app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-mongoose.Promise = global.Promise
-mongoose.connect(process.env.MONGODB_URI + '/' + process.env.MONGODB_DB)
-mongoose.set('debug', !isProduction)
-
-require('./models/User')
-
+require('./lib/mongoose-setup')
 require('./auth/passport')
 
 if (!isProduction) {
