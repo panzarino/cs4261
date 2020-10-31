@@ -13,7 +13,7 @@ import {
   IonToolbar,
 } from '@ionic/react'
 
-import firebase from '../lib/firebase'
+import api, { setAuth } from '../lib/api'
 
 import VerifyNotLoggedIn from '../components/VerifyNotLoggedIn'
 
@@ -35,7 +35,16 @@ const Login: React.FC = () => {
     setLoading(true)
 
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, password)
+      const response = await api.post('/users/login', {
+        email,
+        password,
+      })
+
+      localStorage.setItem('token', response.data.token)
+      setAuth(response.data.token)
+
+      setLoading(false)
+
       history.push('/home')
     } catch (e) {
       setError(true)

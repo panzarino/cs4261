@@ -13,7 +13,7 @@ import {
   IonToolbar,
 } from '@ionic/react'
 
-import firebase from '../lib/firebase'
+import api, { setAuth } from '../lib/api'
 
 import VerifyNotLoggedIn from '../components/VerifyNotLoggedIn'
 
@@ -22,7 +22,7 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string>()
+  const [error, setError] = useState<boolean>(false)
 
   const register = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -34,10 +34,19 @@ const Register: React.FC = () => {
     setLoading(true)
 
     try {
-      await firebase.auth().createUserWithEmailAndPassword(email, password)
+      const response = await api.post('/users/register', {
+        email,
+        password,
+      })
+
+      localStorage.setItem('token', response.data.token)
+      setAuth(response.data.token)
+
+      setLoading(false)
+
       history.push('/home')
     } catch (e) {
-      setError(e.code)
+      setError(true)
       setLoading(false)
     }
   }
@@ -77,17 +86,7 @@ const Register: React.FC = () => {
           <IonButton color="primary" expand="block" type="submit">
             Register
           </IonButton>
-          {error && (
-            <IonItem color="danger">
-              {error === 'auth/email-already-in-use'
-                ? 'Error: that email is already in use'
-                : error === 'auth/invalid-email'
-                ? 'Please use a valid email'
-                : error === 'auth/weak-password'
-                ? 'Error: please use a stronger password'
-                : 'Something went wrong, please try again'}
-            </IonItem>
-          )}
+          {error && <IonItem color="danger">Email is already in use!</IonItem>}
         </form>
       </IonContent>
     </IonPage>

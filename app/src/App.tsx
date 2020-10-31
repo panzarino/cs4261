@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route } from 'react-router-dom'
 import { IonApp, IonRouterOutlet } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
+
+import { setAuth } from './lib/api'
 
 import MainMenu from './pages/MainMenu'
 import Login from './pages/Login'
@@ -28,18 +30,28 @@ import '@ionic/react/css/display.css'
 /* Theme variables */
 import './theme/variables.css'
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/" component={MainMenu} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/add" component={Add} />
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-)
+const App: React.FC = () => {
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      setAuth(token)
+    }
+  }, [])
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Route exact path="/" component={MainMenu} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/home" component={Home} />
+          <Route exact path="/add" component={Add} />
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  )
+}
 
 export default App

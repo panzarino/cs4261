@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { useAuthState } from 'react-firebase-hooks/auth'
-
-import firebase from '../lib/firebase'
 
 const VerifyLoggedIn: React.FC = () => {
-  const [user, loading] = useAuthState(firebase.auth())
+  const [notLoggedIn, setNotLoggedIn] = useState<boolean>(false)
 
-  if (!loading && !user) {
+  useEffect(() => {
+    setNotLoggedIn(!localStorage.getItem('token'))
+  }, [])
+
+  if (notLoggedIn) {
     return <Redirect to="/" />
   }
 
