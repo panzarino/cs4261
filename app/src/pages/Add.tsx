@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
   IonBackButton,
@@ -12,61 +12,41 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { useList } from 'react-firebase-hooks/database'
 
-import firebase from '../lib/firebase'
+import api from '../lib/api'
+import { Course } from '../lib/types'
 
 import VerifyLoggedIn from '../components/VerifyLoggedIn'
 
-const db = firebase.database()
-
 const Add: React.FC = () => {
   const history = useHistory()
-  const [user] = useAuthState(firebase.auth())
   const [search, setSearch] = useState<string>('')
-  const [courses, loading] = useList(
-    db
-      .ref('courses')
-      .orderByChild('name')
-      .startAt(search.toUpperCase())
-      .endAt(search.toUpperCase() + '\uf8ff')
-      .limitToFirst(10)
-  )
-  const [selections] = useList(
-    db
-      .ref('selections')
-      .orderByChild('uid')
-      .equalTo(user ? user.uid : '')
-  )
+  const [courses, setCourses] = useState<Course[]>([])
+  const [selections, setSelections] = useState<string[]>([])
 
-  const addCourse = async (courseKey: string) => {
-    if (!user) {
-      return
-    }
+  useEffect(() => {
+    api.get('/courses/all').then((response) => {
+      setCourses(response.data)
+    })
+  }, [])
 
-    if (selections && selections.length > 0) {
-      const selection = selections[0]
+  useEffect(() => {
+    api.get('/courses/selections').then((response) => {
+      setSelections(response.data)
+    })
+  }, [])
 
-      if (selection.val().courses.includes(courseKey)) {
-        return
-      }
-
-      await db.ref(`selections/${selection.key}`).update({
-        uid: selection.val().uid,
-        courses: [...selection.val().courses, courseKey],
-      })
-    } else {
-      await db.ref('selections').push({
-        uid: user.uid,
-        courses: [courseKey],
-      })
-    }
-
-    setSearch('')
+  const addCourse = async (id: string) => {
+    await api.post('/courses/selections/add', {
+      course: id,
+    })
 
     history.goBack()
   }
+
+  const filteredCourses = courses.filter(
+    (c) => c.name.toLowerCase().indexOf(search.toLowerCase()) >= 0 && !selections.includes(c._id)
+  )
 
   return (
     <IonPage>
@@ -85,19 +65,12 @@ const Add: React.FC = () => {
       <IonContent fullscreen>
         <IonList>
           {search &&
-            !loading &&
-            courses &&
-            (courses.length > 0 ? (
-              courses
-                .filter(
-                  (course) =>
-                    !selections || selections.length === 0 || !selections[0].val().courses.includes(course.key)
-                )
-                .map((course) => (
-                  <IonItem key={course.key} button={true} onClick={() => addCourse(course.key!)}>
-                    {course.val().name}
-                  </IonItem>
-                ))
+            (filteredCourses.length > 0 ? (
+              filteredCourses.map((course) => (
+                <IonItem key={course._id} button={true} onClick={() => addCourse(course._id)}>
+                  {course.name}
+                </IonItem>
+              ))
             ) : (
               <IonItem key="none">No courses found!</IonItem>
             ))}

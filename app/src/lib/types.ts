@@ -1,4 +1,5 @@
 export interface Section {
+  _id: string
   credits: number
   crn: string
   days: string
@@ -9,7 +10,8 @@ export interface Section {
 }
 
 export interface Course {
+  _id: string
   name: string
   fullName: string
-  sections: { [crn: string]: Section }
+  sections: string[] | Section[]
 }

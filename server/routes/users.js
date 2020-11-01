@@ -5,31 +5,23 @@ const User = mongoose.model('User')
 
 const auth = require('../auth/middleware')
 
-router.get('/me', auth.required, function (req, res, next) {
-  User.findById(req.payload.id)
-    .then(function (user) {
-      if (!user) {
-        return res.sendStatus(401)
-      }
+router.get('/me', auth.required, async function (req, res) {
+  const user = await User.findById(req.payload.id)
 
-      return res.json(user.toAuthJSON())
-    })
-    .catch(next)
+  if (!user) return res.sendStatus(401)
+
+  return res.json(user.toAuthJSON())
 })
 
-router.post('/register', function (req, res) {
+router.post('/register', async function (req, res) {
   const user = new User()
 
   user.email = req.body.email.trim()
   user.setPassword(req.body.password)
 
-  user.save(function (err) {
-    if (err) {
-      return res.json({ error: err.message })
-    }
+  await user.save()
 
-    return res.json(user.toAuthJSON())
-  })
+  return res.json(user.toAuthJSON())
 })
 
 router.post('/login', function (req, res, next) {

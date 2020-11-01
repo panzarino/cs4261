@@ -16,14 +16,14 @@ const auth = {
     secret: process.env.SECRET,
     userProperty: 'payload',
     getToken: getTokenFromHeader,
-    algorithms: ['sha512'],
+    algorithms: ['HS256'],
   }),
   optional: jwt({
     secret: process.env.SECRET,
     userProperty: 'payload',
     credentialsRequired: false,
     getToken: getTokenFromHeader,
-    algorithms: ['sha512'],
+    algorithms: ['HS256'],
   }),
 }
 
