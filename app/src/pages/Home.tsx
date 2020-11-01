@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonList,
   IonNote,
@@ -10,45 +12,31 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { useList } from 'react-firebase-hooks/database'
+import { arrowBack, arrowForward } from 'ionicons/icons'
 
-import firebase from '../lib/firebase'
+import api from '../lib/api'
+import { ScheduleSection } from '../lib/types'
 
 import VerifyLoggedIn from '../components/VerifyLoggedIn'
-
-const db = firebase.database()
+import { useHistory } from 'react-router-dom'
 
 const Home: React.FC = () => {
-  const [user] = useAuthState(firebase.auth())
-  const [courses, setCourses] = useState<any[]>([])
-
-  const [selections] = useList(
-    db
-      .ref('selections')
-      .orderByChild('uid')
-      .equalTo(user ? user.uid : '')
-  )
+  const history = useHistory()
+  const [selections, setSelections] = useState<string[]>([])
+  const [schedules, setSchedules] = useState<ScheduleSection[][]>([])
+  const [index, setIndex] = useState<number>(0)
 
   useEffect(() => {
-    if (!selections || selections.length === 0) {
-      return
-    }
-
-    setCourses([])
-    const selection = selections[0]
-    selection.val().courses.forEach((key: string) => {
-      db.ref(`courses/${key}`).once('value', (course) => {
-        if (!courses.find((c) => c.key === course.key)) {
-          setCourses([...courses, course])
-        }
-      })
+    api.get('/courses/selections').then((response) => {
+      setSelections(response.data)
     })
-  }, [selections])
+  }, [])
 
-  const remove = (courseKey: string) => {
-    setCourses(courses.filter((c) => c.key !== courseKey))
-  }
+  useEffect(() => {
+    api.get('/schedules/all').then((response) => {
+      setSchedules(response.data)
+    })
+  }, [history.length])
 
   return (
     <IonPage>
@@ -69,20 +57,43 @@ const Home: React.FC = () => {
         >
           Add Course
         </IonButton>
-        <IonList>
-          {courses.length > 0 ? (
-            courses.map((course) => (
-              <IonItem key={course.key}>
-                {course.val().name}{' '}
-                <IonNote slot="end" color="danger" onClick={() => remove(course.key)}>
-                  X
-                </IonNote>
-              </IonItem>
-            ))
-          ) : (
+
+        {!!schedules.length && (
+          <>
+            <IonToolbar>
+              <IonButtons slot="start">
+                <IonButton disabled={index <= 0} onClick={() => setIndex(index - 1)}>
+                  <IonIcon icon={arrowBack} />
+                </IonButton>
+              </IonButtons>
+              <IonButtons slot="end">
+                <IonButton disabled={index >= schedules.length - 1} onClick={() => setIndex(index + 1)}>
+                  <IonIcon icon={arrowForward} />
+                </IonButton>
+              </IonButtons>
+              <IonTitle>
+                {index + 1}/{schedules.length}
+              </IonTitle>
+            </IonToolbar>
+            <IonList>
+              {schedules[index].map((item) => (
+                <IonItem key={item._id + index} style={{ paddingTop: 20 }}>
+                  {item.name} - {item.sectionName}
+                  <br />
+                  {item.days} - {item.period}
+                  <br />
+                  {item.instructors.join(', ')}
+                </IonItem>
+              ))}
+            </IonList>
+          </>
+        )}
+
+        {!selections.length && (
+          <IonList>
             <IonItem>No courses yet! Add some above to get started.</IonItem>
-          )}
-        </IonList>
+          </IonList>
+        )}
       </IonContent>
     </IonPage>
   )

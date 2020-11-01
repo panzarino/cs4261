@@ -7,7 +7,7 @@ const SectionSchema = new Schema(
     crn: { type: String, required: true, index: true },
     name: { type: String, required: true },
     period: { type: String, required: true },
-    days: [{ type: String, required: true }],
+    days: { type: String, required: true },
     location: { type: String, required: true },
     instructors: [{ type: String, required: true }],
     credits: { type: Number, required: true },

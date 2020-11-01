@@ -41,7 +41,7 @@ const Add: React.FC = () => {
       course: id,
     })
 
-    history.goBack()
+    history.push('/home')
   }
 
   const filteredCourses = courses.filter(
