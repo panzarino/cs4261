@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import {
   IonButton,
   IonButtons,
@@ -7,7 +8,6 @@ import {
   IonIcon,
   IonItem,
   IonList,
-  IonNote,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -15,10 +15,10 @@ import {
 import { arrowBack, arrowForward } from 'ionicons/icons'
 
 import api from '../lib/api'
-import { ScheduleSection } from '../lib/types'
 
+import { ScheduleSection } from '../lib/types'
 import VerifyLoggedIn from '../components/VerifyLoggedIn'
-import { useHistory } from 'react-router-dom'
+import Calendar from '../components/Calendar'
 
 const Home: React.FC = () => {
   const history = useHistory()
@@ -86,6 +86,7 @@ const Home: React.FC = () => {
                 </IonItem>
               ))}
             </IonList>
+            <Calendar schedule={schedules[index]} />
           </>
         )}
 

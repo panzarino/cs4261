@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const router = require('express').Router()
 const moment = require('moment')
 const User = mongoose.model('User')
-const Course = mongoose.model('Course')
 const CourseSelection = mongoose.model('CourseSelection')
 
 const auth = require('../auth/middleware')
