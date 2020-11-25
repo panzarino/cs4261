@@ -7,11 +7,11 @@ import randomColor from 'random-color'
 import { ScheduleSection } from '../lib/types'
 
 const days: { [key: string]: number } = {
-  M: 0,
-  T: 1,
-  W: 2,
-  R: 3,
-  F: 4,
+  M: 1,
+  T: 2,
+  W: 3,
+  R: 4,
+  F: 5,
 }
 
 interface CalendarProps {

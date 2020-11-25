@@ -7,12 +7,14 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
+  IonLabel,
   IonList,
+  IonNote,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { arrowBack, arrowForward } from 'ionicons/icons'
+import { arrowBack, arrowForward, close } from 'ionicons/icons'
 
 import api from '../lib/api'
 
@@ -25,6 +27,7 @@ const Home: React.FC = () => {
   const [selections, setSelections] = useState<string[]>([])
   const [schedules, setSchedules] = useState<ScheduleSection[][]>([])
   const [index, setIndex] = useState<number>(0)
+  const [favorite, setFavorite] = useState<number>()
 
   useEffect(() => {
     api.get('/courses/selections').then((response) => {
@@ -36,6 +39,10 @@ const Home: React.FC = () => {
     api.get('/schedules/all').then((response) => {
       setSchedules(response.data)
     })
+  }, [history.length])
+
+  useEffect(() => {
+    setIndex(0)
   }, [history.length])
 
   return (
@@ -75,17 +82,32 @@ const Home: React.FC = () => {
                 {index + 1}/{schedules.length}
               </IonTitle>
             </IonToolbar>
+
+            <IonButton
+              color={favorite === index ? 'success' : 'light'}
+              expand="block"
+              onClick={() => setFavorite(index)}
+            >
+              {favorite === index ? 'Favorite' : 'Set Favorite'}
+            </IonButton>
+
             <IonList>
               {schedules[index].map((item) => (
                 <IonItem key={item._id + index} style={{ paddingTop: 20 }}>
-                  {item.name} - {item.sectionName}
-                  <br />
-                  {item.days} - {item.period}
-                  <br />
-                  {item.instructors.join(', ')}
+                  <IonLabel>
+                    {item.name} - {item.sectionName}
+                    <br />
+                    {item.days} - {item.period}
+                    <br />
+                    {item.instructors.join(', ')}
+                  </IonLabel>
+                  <IonNote slot="end" color="danger">
+                    <IonIcon icon={close} />
+                  </IonNote>
                 </IonItem>
               ))}
             </IonList>
+
             <Calendar schedule={schedules[index]} />
           </>
         )}

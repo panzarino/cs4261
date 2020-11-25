@@ -16,15 +16,7 @@ export interface Course {
   sections: string[] | Section[]
 }
 
-export interface ScheduleSection {
-  _id: string
-  credits: number
-  crn: string
-  days: string
-  instructors: string[]
-  location: string
-  name: string
-  period: string
+export interface ScheduleSection extends Section {
   sectionName: string
   fullName: string
 }
