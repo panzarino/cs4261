@@ -32,7 +32,7 @@ const Add: React.FC = () => {
 
   useEffect(() => {
     api.get('/courses/selections').then((response) => {
-      setSelections(response.data)
+      setSelections(response.data.selections)
     })
   }, [])
 

@@ -24,7 +24,7 @@ router.get('/selections', auth.required, async function (req, res) {
   const courseSelection = await CourseSelection.findOne({ user: user._id })
 
   if (courseSelection) {
-    return res.json(courseSelection.selections)
+    return res.json(courseSelection)
   }
 
   const newCourseSelection = new CourseSelection({
@@ -34,7 +34,7 @@ router.get('/selections', auth.required, async function (req, res) {
 
   await newCourseSelection.save()
 
-  return res.json(newCourseSelection.selections)
+  return res.json(newCourseSelection)
 })
 
 router.post('/selections/add', auth.required, async function (req, res) {
@@ -45,6 +45,7 @@ router.post('/selections/add', auth.required, async function (req, res) {
   const courseSelection = await CourseSelection.findOne({ user: user._id })
 
   courseSelection.selections.push(req.body.course)
+  courseSelection.favorite = null
 
   await courseSelection.save()
 
@@ -59,6 +60,21 @@ router.delete('/selections/delete/:id', auth.required, async function (req, res)
   const courseSelection = await CourseSelection.findOne({ user: user._id })
 
   courseSelection.selections.splice(req.params.id, 1)
+  courseSelection.favorite = null
+
+  await courseSelection.save()
+
+  return res.json(courseSelection)
+})
+
+router.post('/selections/favorite/set', auth.required, async function (req, res) {
+  const user = await User.findById(req.payload.id)
+
+  if (!user) return res.sendStatus(401)
+
+  const courseSelection = await CourseSelection.findOne({ user: user._id })
+
+  courseSelection.favorite = req.body.favorite
 
   await courseSelection.save()
 

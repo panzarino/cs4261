@@ -31,7 +31,8 @@ const Home: React.FC = () => {
 
   const load = () => {
     api.get('/courses/selections').then((response) => {
-      setSelections(response.data)
+      setSelections(response.data.selections)
+      setFavorite(response.data.favorite)
     })
 
     api.get('/schedules/all').then((response) => {
@@ -39,6 +40,12 @@ const Home: React.FC = () => {
     })
 
     setIndex(0)
+  }
+
+  const updateFavorite = (index: number) => {
+    api.post('/courses/selections/favorite/set', { favorite: index }).then((response) => {
+      setFavorite(response.data.favorite)
+    })
   }
 
   const remove = (index: number) => {
@@ -88,7 +95,7 @@ const Home: React.FC = () => {
             <IonButton
               color={favorite === index ? 'success' : 'light'}
               expand="block"
-              onClick={() => setFavorite(index)}
+              onClick={() => updateFavorite(index)}
             >
               {favorite === index ? 'Favorite' : 'Set Favorite'}
             </IonButton>
