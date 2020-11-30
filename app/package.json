@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@capacitor/core": "2.4.2",
+    "@capacitor/ios": "^2.4.3",
     "@fullcalendar/react": "^5.4.0",
     "@fullcalendar/timegrid": "^5.4.0",
     "@ionic/react": "^5.0.7",
@@ -48,5 +49,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^2.4.3",
+    "@ionic/cli": "^6.12.2"
   }
 }

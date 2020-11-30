@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "start-app": "yarn workspace app start",
-    "start-server": "yarn workspace server start"
+    "start-server": "yarn workspace server start",
+    "ios-open": "yarn workspace app ionic capacitor open ios",
+    "ios-install": "yarn workspace app ionic capacitor update ios",
+    "ios-build": "yarn workspace app ionic capacitor copy ios",
+    "seed-courses": "yarn workspace server exec node scripts/parse-courses.js"
   },
   "devDependencies": {
-    "@capacitor/cli": "2.4.2",
-    "firebase-admin": "^9.2.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "2.1.2"
