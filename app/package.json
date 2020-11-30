@@ -20,7 +20,6 @@
     "axios": "^0.21.0",
     "ionicons": "^5.0.0",
     "moment": "^2.29.1",
-    "random-color": "^1.0.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-firebase-hooks": "^2.2.0",

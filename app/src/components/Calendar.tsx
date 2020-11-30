@@ -1,8 +1,7 @@
 import React from 'react'
-import FullCalendar from '@fullcalendar/react'
+import FullCalendar, { EventInput } from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import moment from 'moment'
-import randomColor from 'random-color'
 
 import { ScheduleSection } from '../lib/types'
 
@@ -14,28 +13,35 @@ const days: { [key: string]: number } = {
   F: 5,
 }
 
+const colors: string[] = ['#FF0000', '#20BF55', '#CC14CC', '#FC7753', '#1E2EDE', '#009688', '#BDBF09']
+
+const getColor = (index: number): string => {
+  return colors[colors.length % index]
+}
+
 interface CalendarProps {
   schedule: ScheduleSection[]
 }
 
 const Calendar: React.FC<CalendarProps> = ({ schedule }) => {
-  const events = []
+  const events: EventInput[] = []
   const base = moment().startOf('week')
 
-  for (const course of schedule) {
+  schedule.forEach((course, index) => {
     const [start, end] = course.period.split(' - ').map((time) => moment(time, 'LT'))
-    const color = randomColor().hexString()
+    const color = getColor(index)
 
-    for (const day of course.days) {
+    course.days.split('').forEach((day) => {
       events.push({
         title: course.name,
         start: base.clone().add(days[day], 'days').set({ hour: start.hour(), minute: start.minute() }).toDate(),
         end: base.clone().add(days[day], 'days').set({ hour: end.hour(), minute: end.minute() }).toDate(),
         backgroundColor: color,
+        borderColor: color,
         textColor: '#333',
       })
-    }
-  }
+    })
+  })
 
   return (
     <FullCalendar
