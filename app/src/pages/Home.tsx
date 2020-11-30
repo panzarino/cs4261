@@ -29,21 +29,23 @@ const Home: React.FC = () => {
   const [index, setIndex] = useState<number>(0)
   const [favorite, setFavorite] = useState<number>()
 
-  useEffect(() => {
+  const load = () => {
     api.get('/courses/selections').then((response) => {
       setSelections(response.data)
     })
-  }, [])
 
-  useEffect(() => {
     api.get('/schedules/all').then((response) => {
       setSchedules(response.data)
     })
-  }, [history.length])
 
-  useEffect(() => {
     setIndex(0)
-  }, [history.length])
+  }
+
+  const remove = (index: number) => {
+    api.delete(`/courses/selections/delete/${index}`).then(load)
+  }
+
+  useEffect(load, [history.length])
 
   return (
     <IonPage>
@@ -92,7 +94,7 @@ const Home: React.FC = () => {
             </IonButton>
 
             <IonList>
-              {schedules[index].map((item) => (
+              {schedules[index].map((item, i) => (
                 <IonItem key={item._id + index} style={{ paddingTop: 20 }}>
                   <IonLabel>
                     {item.name} - {item.sectionName}
@@ -101,8 +103,10 @@ const Home: React.FC = () => {
                     <br />
                     {item.instructors.join(', ')}
                   </IonLabel>
-                  <IonNote slot="end" color="danger">
-                    <IonIcon icon={close} />
+                  <IonNote slot="end">
+                    <IonButton color="danger" fill="outline" onClick={() => remove(i)}>
+                      <IonIcon icon={close} />
+                    </IonButton>
                   </IonNote>
                 </IonItem>
               ))}

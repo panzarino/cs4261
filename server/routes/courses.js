@@ -51,4 +51,18 @@ router.post('/selections/add', auth.required, async function (req, res) {
   return res.json(courseSelection)
 })
 
+router.delete('/selections/delete/:id', auth.required, async function (req, res) {
+  const user = await User.findById(req.payload.id)
+
+  if (!user) return res.sendStatus(401)
+
+  const courseSelection = await CourseSelection.findOne({ user: user._id })
+
+  courseSelection.selections.splice(req.params.id, 1)
+
+  await courseSelection.save()
+
+  return res.json(courseSelection)
+})
+
 module.exports = router
