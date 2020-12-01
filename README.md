@@ -4,7 +4,7 @@ We built an app to generate schedule combinations for students at Georgia Tech.
 
 ### Installation
 
-In order to run this project, you must have [Node.js](https://nodejs.org/en/) and [MongoDB](https://www.mongodb.com/) installed.
+In order to run this project, you must have [Node.js](https://nodejs.org/en/), [Yarn](https://classic.yarnpkg.com/en/), and [MongoDB](https://www.mongodb.com/) installed.
 
 Next, clone this repository to your local workspace. Go ahead and open a terminal in this project directory.
 
